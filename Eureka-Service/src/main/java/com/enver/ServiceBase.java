@@ -57,14 +57,15 @@ public class ServiceBase {
         applicationInfoManager.setInstanceStatus(InstanceInfo.InstanceStatus.UP);
         waitForRegistrationWithEureka(eurekaClient);
         System.out.println("Service started and ready to process requests..");
-
+        boolean listenClients = true;
         try {
             int myServingPort = applicationInfoManager.getInfo().getPort();  // read from my registered info
             ServerSocket serverSocket = new ServerSocket(myServingPort);
-            final Socket s = serverSocket.accept();
-            System.out.println("Client got connected... processing request from the client");
-            processRequest(s);
-
+            while(listenClients){
+                final Socket s = serverSocket.accept();
+                System.out.println("Client got connected... processing request from the client");
+                processRequest(s);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

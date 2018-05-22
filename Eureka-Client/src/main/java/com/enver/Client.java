@@ -115,14 +115,29 @@ public class Client {
     }
 
     public static void main(String[] args) {
-        Client sampleClient = new Client();
+        int numberOfThreads=50;
+        for(int i = 0 ; i< numberOfThreads;i++){
+            Thread thread = new Thread(new Runnable() {
+                public void run() {
+                    Client sampleClient = new Client();
 
-        // create the client
-        ApplicationInfoManager applicationInfoManager = initializeApplicationInfoManager(new MyDataCenterInstanceConfig());
-        EurekaClient client = initializeEurekaClient(applicationInfoManager, new DefaultEurekaClientConfig());
+                    // create the client
+                    ApplicationInfoManager applicationInfoManager = initializeApplicationInfoManager(new MyDataCenterInstanceConfig());
+                    EurekaClient client = initializeEurekaClient(applicationInfoManager, new DefaultEurekaClientConfig());
+                    sampleClient.sendRequestToServiceUsingEureka(client);
+                }
+            });
 
+            try {
+                thread.start();
+                thread.join(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         // use the client
-        sampleClient.sendRequestToServiceUsingEureka(client);
+
+
 
 
         // shutdown the client
